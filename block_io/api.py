@@ -9,10 +9,10 @@ def splitter(data: list):
 
 
 class Client:
-    def __init__(self, api_key, api_version):
+    def __init__(self, api_key, api_version=2):
         self.__session = ClientSession(base_url='https://block.io')
+        self.base_path = f'/api/v{api_version}/'
         self.api_key = api_key
-        self.api_version = api_version
 
     @staticmethod
     def __check_errors(response: dict, status: int):
@@ -48,12 +48,12 @@ class Client:
         params['api_key'] = self.api_key
 
         return await self.__prepare_response(
-            await self.__session.get(f'/api/v{self.api_version}/' + url, params=params)
+            await self.__session.get(self.base_path + url, params=params)
         )
 
     async def __post(self, url, data: dict):
         return await self.__prepare_response(
-            await self.__session.post(f'/api/v{self.api_version}/' + url, params={'api_key': self.api_key}, json=data)
+            await self.__session.post(self.base_path + url, params={'api_key': self.api_key}, json=data)
         )
 
     async def get_new_address(self, label: str = None, address_type: str = None):
